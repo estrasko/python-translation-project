@@ -75,7 +75,10 @@ def get_reverse(sequence):
     >>> get_reverse('AUGC')
     'CGUA'
     """
-    pass
+    seq_list = list(sequence.upper())
+    seq_list.reverse()
+    rev_seq = "".join(seq_list)
+    return rev_seq
 
 def get_complement(sequence):
     """Get the complement of a `sequence` of nucleotides.
@@ -89,7 +92,10 @@ def get_complement(sequence):
     >>> get_complement('AUGC')
     'UACG'
     """
-    pass
+    table = str.maketrans("AUCG", "UAGC")
+    return sequence.upper().translate(table)
+    complement = sequence.translate(table)
+    return complement
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
