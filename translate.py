@@ -30,15 +30,16 @@ def translate_sequence(rna_sequence, genetic_code):
     """
     rna_sequence = rna_sequence.upper()
     amino_acid_list = []
-    while True:
-        if len(rna_sequence) < 3:
-            break
-        codon, remaining_seq = pop_next_codon(rna_sequence)
-        rna_sequence = remaining_seq
+
+    for i in range(0, len(rna_sequence) - 2, 3):
+        codon = rna_sequence[i:i+3]
         aa = genetic_code[codon]
+
         if aa == "*":
             break
+
         amino_acid_list.append(aa)
+
     return "".join(amino_acid_list)
 
 def get_all_translations(rna_sequence, genetic_code):
@@ -72,7 +73,24 @@ def get_all_translations(rna_sequence, genetic_code):
         A list of strings; each string is an sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
+    rna_sequence = rna_sequence.upper()
+    amino_acid_seq_list = []
+
+    for base_index in range(len(rna_sequence) - 2):
+        codon = rna_sequence[base_index:base_index + 3]
+
+        if codon != "AUG":
+            continue
+
+        aa_seq = translate_sequence(
+            rna_sequence=rna_sequence[base_index:],
+            genetic_code=genetic_code,
+        )
+
+        if aa_seq:
+            amino_acid_seq_list.append(aa_seq)
+
+    return amino_acid_seq_list
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -152,7 +170,22 @@ def get_longest_peptide(rna_sequence, genetic_code):
         A string of the longest sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
+    forward_peptides = get_all_translations(rna_sequence, genetic_code)
+
+    reverse_complement_seq = reverse_and_complement(rna_sequence)
+    reverse_peptides = get_all_translations(reverse_complement_seq, genetic_code)
+
+    all_peptides = forward_peptides + reverse_peptides
+
+    if not all_peptides:
+        return ""
+
+    longest_peptide = all_peptides[0]
+    for peptide in all_peptides:
+        if len(peptide) > len(longest_peptide):
+            longest_peptide = peptide
+
+    return longest_peptide
 
 
 if __name__ == '__main__':
